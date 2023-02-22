@@ -4,7 +4,7 @@ Steam is an online platform used by most video game publishers for PC game distr
 ## Research Questions
 
 * How does the rating prediction accuracy differ between the content-based filtering and item-item collaborative filtering models? 
-* How can game metadata(e.g. publisher, developer, release date) beyond game genre(s) improve content-based filtering recommendations?
+* How can additional game metadata(e.g. publisher, developer, release date) beyond game genre(s) improve content-based filtering recommendations (i.e. rating estimation accuracy)?
 
 ## Models
 ### Playtime normalization
@@ -18,7 +18,7 @@ For both models, game ratings will be obtained by normalizing the total playtime
 ![image](https://user-images.githubusercontent.com/67298240/220737101-2dea36d6-896a-4052-ba7a-1d4c54c3fc7f.png)
 3. Prediction heuristics: cosine distance of an item and user profile.
 ![image](https://user-images.githubusercontent.com/67298240/220737309-457ac254-d4b5-4c9c-85e1-4b9c26adaa3a.png)
-4. Recommend top N games
+4. Recommend top N games by estimated ratings
 
 ### Item-item collaborative filtering model
 #### Algorithm
@@ -26,7 +26,7 @@ For both models, game ratings will be obtained by normalizing the total playtime
 1. Compute estimated ratings for all games that user x has not played:
     1. Use cosine similarity to define similarities to unplayed game i
     2. Obtain KNNs of unplayed game i and estimate rating through the average weighted by similarities
-2. Recommend top N games
+2. Recommend top N games by estimated ratings
 
 ## Dataset
 Source: https://steam.internet.byu.edu/
