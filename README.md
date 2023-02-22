@@ -13,11 +13,11 @@ For both models, game ratings will be obtained by normalizing the total playtime
 ### Content-based filtering model
 #### Algorithm
 1. Build the item profiles: vector of the game’s genre, developer and publisher from the dataset.
-![image](https://user-images.githubusercontent.com/51273366/220732967-af9d10aa-8f8a-4c6d-8fe3-7d164b7568b1.png)
+![image](https://user-images.githubusercontent.com/67298240/220737000-6543b02a-91e9-4b8d-832c-f341d9c09392.png)
 2. Build the user profile: weighted average of rated item profiles.
-![image](https://user-images.githubusercontent.com/51273366/220733037-1889e10a-2d2c-40f6-ba13-74dec19f08c0.png)
+![image](https://user-images.githubusercontent.com/67298240/220737101-2dea36d6-896a-4052-ba7a-1d4c54c3fc7f.png)
 3. Prediction heuristics: cosine distance of an item and user profile.
-![image](https://user-images.githubusercontent.com/51273366/220733073-cecedecb-8c52-4ae4-93dc-562b797b706f.png)
+![image](https://user-images.githubusercontent.com/67298240/220737309-457ac254-d4b5-4c9c-85e1-4b9c26adaa3a.png)
 4. Recommend top N games
 
 ### Item-item collaborative filtering model
