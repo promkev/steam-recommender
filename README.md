@@ -13,13 +13,16 @@ For both models, game ratings will be obtained by normalizing the total playtime
 ### Content-based filtering model
 #### Algorithm
 1. Build the item profiles: vector of the game’s genre, developer and publisher from the dataset.
+![image](https://user-images.githubusercontent.com/51273366/220732967-af9d10aa-8f8a-4c6d-8fe3-7d164b7568b1.png)
 2. Build the user profile: weighted average of rated item profiles.
+![image](https://user-images.githubusercontent.com/51273366/220733037-1889e10a-2d2c-40f6-ba13-74dec19f08c0.png)
 3. Prediction heuristics: cosine distance of an item and user profile.
+![image](https://user-images.githubusercontent.com/51273366/220733073-cecedecb-8c52-4ae4-93dc-562b797b706f.png)
 4. Recommend top N games
 
 ### Item-item collaborative filtering model
 #### Algorithm
-
+![image](https://user-images.githubusercontent.com/51273366/220733175-ab374386-6fef-425c-af60-abc3922fd977.png)
 1. Compute estimated ratings for all games that user x has not played:
     1. Use cosine similarity to define similarities to unplayed game i
     2. Obtain KNNs of unplayed game i and estimate rating through the average weighted by similarities
