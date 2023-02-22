@@ -6,9 +6,28 @@ Steam is an online platform used by most video game publishers for PC game distr
 * How does the rating prediction accuracy differ between the content-based filtering and item-item collaborative filtering models? 
 * How can additional game metadata(e.g. publisher, developer, release date) beyond game genre(s) improve content-based filtering recommendations (i.e. rating estimation accuracy)?
 
+## Dataset
+* Source: https://steam.internet.byu.edu/
+* 109 million users
+* 716 million games
+
+### Users_Games
+One row per user per purchased game.
+* steamid: a unique identifier for a user.
+* appid: a unique identifier for a game.
+* playtime_forever: total time the user has played the game in minutes.
+### Games
+One row per game.
+* appid: a unique identifier for a game.
+* genre: the name of genre associated with the game (multiple possible)
+* developer: the name of the game’s developer (multiple possible)
+* publisher: the name of the game’s publisher (multiple possible)
+* rating? The rating of the "app" on Metacritic. Set to -1 if not applicable.
+
 ## Models
+
 ### Playtime normalization
-For both models, game ratings will be obtained by normalizing the total playtime of users for each individual game. Normalization is per game since a short story game may be finished in a few hours while RPG genre games may be played for hundreds of hours. In addition, games with zero playtime will be considered as average in the ratings. Normalization would be {game X playtime for user A}/{game X global playtime average} and 0 playtime being normalized to {game X global playtime average}.
+For both models, game ratings will be obtained by normalizing the total playtime of users for each individual game. Normalization is per game since a short story game may be finished in a few hours while RPG genre games may be played for hundreds of hours. Normalization would be `game X playtime for user A`/`game X global playtime average`. Zero playtime is normalized to 1 (i.e average playtime).
 
 ### Content-based filtering model
 #### Algorithm
@@ -30,18 +49,4 @@ User by game rating matrix
     2. Obtain KNNs of unplayed game i and estimate rating through the average weighted by similarities
 2. Recommend top N games by estimated ratings
 
-## Dataset
-Source: https://steam.internet.byu.edu/
 
-### Users_Games
-One row per user per purchased game.
-* steamid: a unique identifier for a user.
-* appid: a unique identifier for a game.
-* playtime_forever: total time the user has played the game in minutes.
-### Games
-One row per game.
-* appid: a unique identifier for a game.
-* genre: the name of genre associated with the game (multiple possible)
-* developer: the name of the game’s developer (multiple possible)
-* publisher: the name of the game’s publisher (multiple possible)
-* rating? The rating of the "app" on Metacritic. Set to -1 if not applicable.
