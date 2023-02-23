@@ -22,7 +22,7 @@ One row per game.
 * genre: the name of genre associated with the game (multiple possible)
 * developer: the name of the game’s developer (multiple possible)
 * publisher: the name of the game’s publisher (multiple possible)
-* rating? The rating of the "app" on Metacritic. Set to -1 if not applicable.
+* release_date: the date when the game was first made available on the Steam storefront.
 
 ## Models
 
