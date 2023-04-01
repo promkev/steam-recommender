@@ -8,10 +8,13 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 from pyspark.sql.types import DecimalType
 
-spark = SparkSession.builder.appName('ReadMariaDB').config("spark.driver.memory", "64g").getOrCreate()
+spark = SparkSession.builder.appName('ReadMariaDB') \
+.config("spark.driver.memory", "32g") \
+.config("spark.sql.pivotMaxValues", "1000000") \
+.getOrCreate()
 
 
-sql = "select * from Games_2 WHERE playtime_forever IS NOT NULL"
+sql = "select * from 01_sampled_games_2v2 WHERE playtime_forever IS NOT NULL AND playtime_forever > 0"
 database = "steam"
 user = "root"
 password = "example"
