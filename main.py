@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.rdd import RDD
 from pyspark.sql import Row
 from pyspark.sql import DataFrame
-from pyspark.sql.window import Window #for ranking
+from pyspark.sql.window import Window  # for ranking
 from pyspark.sql.functions import lit
 from pyspark.sql.functions import collect_set, collect_list
 from pyspark.sql.functions import struct
@@ -25,7 +25,7 @@ def cosine_similarity_udf(a, b):
     return dot_product / (norm_a * norm_b)
 
 
-weighted average features function
+# weighted average features function
 def weighted_avg_features(ratings, features):
     if not ratings or not features:
         return []
@@ -36,18 +36,20 @@ def weighted_avg_features(ratings, features):
     for rating, feature in zip(ratings, features):
         weight = float(rating)
         total_weight += weight
-        weighted_sum = [ws + weight * f for ws, f in zip(weighted_sum, feature)]
+        weighted_sum = [ws + weight * f for ws,
+                        f in zip(weighted_sum, feature)]
 
     if total_weight == 0:
         return weighted_sum
 
     return [ws / total_weight for ws in weighted_sum]
 
+
 spark = SparkSession.builder.appName('ReadMySQL') \
-.config("spark.driver.memory", "32g") \
-.config("spark.sql.pivotMaxValues", "1000000") \
-.config("spark.jars", "C:\\Program Files (x86)\\MySQL\\Connector J 8.0\\mysql-connector-j-8.0.32.jar") \
-.getOrCreate()
+    .config("spark.driver.memory", "32g") \
+    .config("spark.sql.pivotMaxValues", "1000000") \
+    .config("spark.jars", "C:\\Program Files (x86)\\MySQL\\Connector J 8.0\\mysql-connector-j-8.0.32.jar") \
+    .getOrCreate()
 
 # sql = "select * from 01_sampled_games_2v2 WHERE playtime_forever IS NOT NULL AND playtime_forever > 0"
 sql = """
@@ -80,9 +82,12 @@ df.show(truncate=False)
 games_genres_df = df.groupBy("appid").agg(collect_set("genre").alias("genres"))
 
 # Create a list of unique genres
-unique_genres = sorted(df.select("genre").distinct().rdd.flatMap(lambda x: x).collect())
+unique_genres = sorted(
+    df.select("genre").distinct().rdd.flatMap(lambda x: x).collect())
 
 # Define a UDF to create a binary vector for each game's genres
+
+
 @udf(returnType=ArrayType(IntegerType()))
 def genre_vector(genres):
     return [1 if genre in genres else 0 for genre in unique_genres]
@@ -90,20 +95,24 @@ def genre_vector(genres):
 
 # Add a new column 'genre_vector' to the DataFrame
 # the genre vector will now have a 1 for each genre that the game belongs to
-games_genres_df = games_genres_df.withColumn("genre_vector", genre_vector("genres"))
+games_genres_df = games_genres_df.withColumn(
+    "genre_vector", genre_vector("genres"))
 
 # games_genres_df.show(truncate=False)
 # Join the main DataFrame with the games_genres_df on appid to include the genre_vector
-df = df.join(broadcast(games_genres_df.select("appid", "genre_vector")), on="appid")
+df = df.join(broadcast(games_genres_df.select(
+    "appid", "genre_vector")), on="appid")
 
 # build the user profiles
 
 # 1. Calculate the global playtime average for each game
-global_playtime_avg = df.groupBy("appid").agg(avg("playtime_forever").alias("global_playtime_avg"))
+global_playtime_avg = df.groupBy("appid").agg(
+    avg("playtime_forever").alias("global_playtime_avg"))
 
 # 2. Normalize the user's playtime for each game based on the global average
 df = df.join(broadcast(global_playtime_avg), on="appid")
-df = df.withColumn("playtime_normalized", F.when(df.playtime_forever == 0, 1).otherwise(df.playtime_forever / df.global_playtime_avg))
+df = df.withColumn("playtime_normalized", F.when(
+    df.playtime_forever == 0, 1).otherwise(df.playtime_forever / df.global_playtime_avg))
 
 # 3. Implement the user profile
 # First, let's group the data by user and aggregate the genre vectors and normalized playtimes
@@ -116,7 +125,8 @@ user_aggregated_data = df.groupBy("steamid").agg(
 weighted_avg_features_udf = udf(weighted_avg_features, ArrayType(FloatType()))
 
 # Calculate the user profile as the weighted average of rated item profiles (genre vectors)
-user_profiles = user_aggregated_data.withColumn("user_profile", weighted_avg_features_udf("playtime_normalized_list", "genres_list"))
+user_profiles = user_aggregated_data.withColumn(
+    "user_profile", weighted_avg_features_udf("playtime_normalized_list", "genres_list"))
 
 # user_profiles.show(truncate=False)
 
@@ -141,11 +151,9 @@ sorted_recommendations = recommendations.sort(desc("similarity"))
 # Create a window by steamid and similarity to get ranking
 window_spec = Window.partitionBy("steamid").orderBy(desc("similarity"))
 
-ranked_recommendations = sorted_recommendations.withColumn("rank", F.row_number().over(window_spec))
+ranked_recommendations = sorted_recommendations.withColumn(
+    "rank", F.row_number().over(window_spec))
 
-top_10_recommendations = ranked_recommendations.filter(ranked_recommendations.rank <= 10)
+top_10_recommendations = ranked_recommendations.filter(
+    ranked_recommendations.rank <= 10)
 top_10_recommendations.show(1)
-
-
-
-
