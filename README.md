@@ -3,7 +3,7 @@ Steam is an online platform used by most video game publishers for PC game distr
 
 ## Research Questions
 
-* How does the rating prediction accuracy differ between the content-based filtering and item-item collaborative filtering models? 
+* Does a user's playtime as implicit ratings properly represent their game preferences when used in a recommender system?
 * How can additional game metadata(e.g. publisher, developer, release date) beyond game genre(s) improve content-based filtering recommendations (i.e. rating estimation accuracy)?
 
 ## Dataset
