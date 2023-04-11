@@ -3,7 +3,7 @@ Steam is an online platform used by most video game publishers for PC game distr
 
 ## Research Questions
 
-* How does the rating prediction accuracy differ between the content-based filtering and item-item collaborative filtering models? 
+* Does a user's playtime as implicit ratings properly represent their game preferences when used in a recommender system?
 * How can additional game metadata(e.g. publisher, developer, release date) beyond game genre(s) improve content-based filtering recommendations (i.e. rating estimation accuracy)?
 
 ## Dataset
@@ -24,11 +24,26 @@ One row per game.
 * publisher: the name of the game’s publisher (multiple possible)
 * release_date: the date when the game was first made available on the Steam storefront.
 
+## Per-Game 1-5 Rating Normalization
+For each game, we calculate the mean and standard deviation. We then create buckets for each rating:
+### Scaling factor
+The cut points are scaled on a per-user basis since some users are more casual gamers while others may spend a lot more time gaming. The scaling factor is calculated as follows:
+
+(user_playtime_average)/(global_playtime_average)
+
+### Cut points
+* Cut point 1: (mean - std_dev*0.5) * scaling_factor if > 0, else 0
+* Cut point 2: mean
+* Cut point 3: (mean + std_dev*0.5) * scaling_factor
+* Cut point 4: (mean + std_dev) * scaling_factor
+### Ratings
+* Rating 1: 0 < x < cut point 1
+* Rating 2: cut point 1 < x < cut point 2
+* Rating 3: cut point 2 < x < cut point 3
+* Rating 4: cut point 3 < x < cut point 4
+* Rating 5: cut point 5 < x < inf
+
 ## Models
-
-### Playtime normalization
-For both models, game ratings will be obtained by normalizing the total playtime of users for each individual game. Normalization is per game since a short story game may be finished in a few hours while RPG genre games may be played for hundreds of hours. Normalization would be `game X playtime for user A`/`game X global playtime average`. Zero playtime is normalized to 1 (i.e average playtime).
-
 ### Content-based filtering model
 #### Algorithm
 1. Build the item profiles: vector of the game’s genre, developer and publisher from the dataset.
